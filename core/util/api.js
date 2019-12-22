@@ -8,6 +8,9 @@ export class Api {
 
   getToken = () => {
     if (! this.token) {
+      if (! window || ! window.localStorage) {
+        return null
+      }
       const sessionToken = window.localStorage.getItem(`${APP_NAMESPACE}:api.token`)
       if (sessionToken) {
         this.token = sessionToken
@@ -32,6 +35,8 @@ export class Api {
   }
 
   handleResponse(response, callback) {
+    // alert(JSON.stringify(response))
+    alert(JSON.stringify(response.json()))
     return response.json()
       .then(json => callback && callback(json))
       .catch(error => this.handleError(error, callback))
@@ -39,6 +44,7 @@ export class Api {
 
   get(path, params = {}, callback = () => {}) {
     const url = `${this.baseUrl}/${path}?${toUrlParams(params)}`
+    // alert(url)
     return fetch(url, {
       headers: {
         ...this.getAuthHeaders(),
